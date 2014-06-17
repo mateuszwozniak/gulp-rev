@@ -65,6 +65,22 @@ An asset manifest, mapping the original paths to the revisioned paths, will be w
 }
 ```
 
+### Ignoring files
+You can pass `ignore` array to exclude particular files:
+
+```js
+var gulp = require('gulp');
+var rev = require('gulp-rev');
+
+gulp.task('default', function () {
+	return gulp.src(['build/assets/*.*'])
+		.pipe(rev({
+		    ignore: [/\.(png|jpe?g|gif)$/, '.html']
+		}))
+		.pipe(gulp.dest('build/assets'));  // write rev'd assets to build dir
+});
+```
+Ignore can contain regular expressions or strings (as '.html') which will be converted to regular expressions.
 
 ### Integration
 

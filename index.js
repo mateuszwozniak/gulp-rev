@@ -20,11 +20,18 @@ function relPath(base, filePath) {
 	}
 }
 
-var plugin = function () {
+var plugin = function (options) {
+	options || (options = {});
+	options.ignore || (options.ignore = [/^\/favicon.ico$/g]);
+
 	return through.obj(function (file, enc, cb) {
 		if (file.isNull()) {
 			this.push(file);
 			return cb();
+		}
+
+		if (isFileIgnored(file)) {
+			return cb(null, file);
 		}
 
 		// save the old path for later
@@ -38,6 +45,13 @@ var plugin = function () {
 		this.push(file);
 		cb();
 	});
+
+	function isFileIgnored(file) {
+		for (var i = options.ignore.length; i--;) {
+			var regex = (options.ignore[i] instanceof RegExp) ? options.ignore[i] : new RegExp(options.ignore[i] + '$', "ig");
+			if (file.path.match(regex)) return true;
+		}
+	}
 };
 
 plugin.manifest = function () {
